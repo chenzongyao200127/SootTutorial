@@ -1,6 +1,7 @@
 package dev.navids.multicomp1;
 
 public class ClassChild extends ClassParent {
+
     @Override
     public void baseMethod(){
         childMethod();

@@ -10,7 +10,9 @@ import androidx.appcompat.app.AppCompatActivity;
 public class SecondActivity extends AppCompatActivity {
 
     MyReceiver myReceiver = new MyReceiver();
+
     static ClassParent parentInstance = new ClassParent();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -20,7 +22,8 @@ public class SecondActivity extends AppCompatActivity {
         registerReceiver(myReceiver, intentFilter);
         findViewById(R.id.use_button).setOnClickListener(new Button3());
     }
-    class Button3 implements View.OnClickListener{
+
+    static class Button3 implements View.OnClickListener{
         ClassChild childInstance = new ClassChild();
         @Override
         public void onClick(View v) {

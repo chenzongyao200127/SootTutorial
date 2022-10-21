@@ -15,7 +15,8 @@ import java.io.File;
 
 public class HelloSoot {
 
-    public static String sourceDirectory = System.getProperty("user.dir") + File.separator + "demo" + File.separator + "HelloSoot";
+    public static String sourceDirectory = System.getProperty("user.dir") + File.separator
+            + "demo" + File.separator + "HelloSoot";
     public static String clsName = "FizzBuzz";
     public static String methodName = "printFizzBuzz";
 
@@ -64,9 +65,7 @@ public class HelloSoot {
         }
 
         // Draw the control-flow graph of the method if 'draw' is provided in arguments
-        boolean drawGraph = false;
-        if (args.length > 0 && args[0].equals("draw"))
-            drawGraph = true;
+        boolean drawGraph = args.length > 0 && args[0].equals("draw");
         if (drawGraph) {
             UnitGraph ug = new ClassicCompleteUnitGraph(sm.getActiveBody());
             Visualizer.v().addUnitGraph(ug);

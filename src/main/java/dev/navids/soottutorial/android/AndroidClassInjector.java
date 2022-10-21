@@ -86,6 +86,9 @@ public class AndroidClassInjector {
         SootField counterField = new SootField("counter", IntType.v(), Modifier.PUBLIC | Modifier.STATIC);
         staticCounterClass.addField(counterField);
         return counterField;
+        // As can be seen, it’s so simple: just instantiate a `SootField`, provide its name, type,
+        // and its modifiers (note that the modifiers are aggregated by or, `|` binary operator).
+        // Then we add this field to the class.
     }
 
 
@@ -98,15 +101,15 @@ public class AndroidClassInjector {
         JimpleBody body = Jimple.v().newBody(incMethod);
 
         UnitPatchingChain units = body.getUnits();
+
         // Increment counterField by one
         Local counterLocal = InstrumentUtil.generateNewLocal(body, IntType.v());
         units.add(Jimple.v().newAssignStmt(counterLocal, Jimple.v().newStaticFieldRef(counterField.makeRef())));
-        units.add(Jimple.v().newAssignStmt(counterLocal,
-                Jimple.v().newAddExpr(counterLocal, IntConstant.v(1))));
+        units.add(Jimple.v().newAssignStmt(counterLocal, Jimple.v().newAddExpr(counterLocal, IntConstant.v(1))));
         units.add(Jimple.v().newAssignStmt(Jimple.v().newStaticFieldRef(counterField.makeRef()),counterLocal));
 
         // Log the counter value
-        units.addAll(InstrumentUtil.generateLogStmts(body, "Counter's value: ", counterLocal));
+        units.addAll(InstrumentUtil.generateLogStmts(body, "[*]Counter's value: ", counterLocal));
 
         // The method should be finished by a return
         Unit returnUnit = Jimple.v().newReturnVoidStmt();

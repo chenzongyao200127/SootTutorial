@@ -17,9 +17,7 @@ public class AndroidUtil {
         try {
             ProcessManifest manifest = new ProcessManifest(apkPath);
             packageName = manifest.getPackageName();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (XmlPullParserException e) {
+        } catch (IOException | XmlPullParserException e) {
             e.printStackTrace();
         }
         return packageName;
@@ -35,7 +33,9 @@ public class AndroidUtil {
         return getFlowDroidConfig(apkPath, androidJar, InfoflowConfiguration.CallgraphAlgorithm.SPARK);
     }
 
-    public static InfoflowAndroidConfiguration getFlowDroidConfig(String apkPath, String androidJar, InfoflowConfiguration.CallgraphAlgorithm cgAlgorithm) {
+    public static InfoflowAndroidConfiguration getFlowDroidConfig(String apkPath,
+                                                                  String androidJar,
+                                                                  InfoflowConfiguration.CallgraphAlgorithm cgAlgorithm) {
         final InfoflowAndroidConfiguration config = new InfoflowAndroidConfiguration();
         config.getAnalysisFileConfig().setTargetAPKFile(apkPath);
         config.getAnalysisFileConfig().setAndroidPlatformDir(androidJar);

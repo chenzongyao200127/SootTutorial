@@ -1,5 +1,6 @@
 #!/bin/bash
-BUILDTOOLS=$ANDROID_HOME/build-tools/29.0.3
+# BUILDTOOLS=$ANDROID_HOME/build-tools/29.0.3
+BUILDTOOLS=/home/czy/Library/Android/sdk/build-tools/30.0.3
 zipalign=$BUILDTOOLS/zipalign
 apksigner=$BUILDTOOLS/apksigner
 INSTRUMENTED_APP=$1

@@ -1,6 +1,7 @@
 package dev.navids.multicomp1;
 
 public class ClassParent {
+
     public void baseMethod(){}
 
     public void unreachableMethod(){

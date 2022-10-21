@@ -17,18 +17,27 @@ public class InstrumentUtil {
     public static final String TAG = "<SOOT_TUTORIAL>";
 
     public static void setupSoot(String androidJar, String apkPath, String outputPath) {
+        // Reset the Soot settings (it's necessary if you are analyzing several APKs)
         G.reset();
+
+        // Generic options
         Options.v().set_allow_phantom_refs(true);
         Options.v().set_whole_program(true);
         Options.v().set_prepend_classpath(true);
-        Options.v().set_validate(true);
-        Options.v().set_src_prec(Options.src_prec_apk);
-        Options.v().set_output_format(Options.output_format_dex);
-        Options.v().set_android_jars(androidJar);
-        Options.v().set_process_dir(Collections.singletonList(apkPath));
+
+        // Read (APK Dex-to-Jimple) Options
+        Options.v().set_android_jars(androidJar); // The path to Android Platforms
+        Options.v().set_src_prec(Options.src_prec_apk); // Determine the input is an APK
+        Options.v().set_process_dir(Collections.singletonList(apkPath)); // Provide paths to the APK
+        Options.v().set_process_multiple_dex(true);  // Inform Dexpler that the APK may have more than one .dex files
         Options.v().set_include_all(true);
-        Options.v().set_process_multiple_dex(true);
+
+        // Write (APK Generation) Options
+        Options.v().set_output_format(Options.output_format_dex);
         Options.v().set_output_dir(outputPath);
+        Options.v().set_validate(true); // Validate Jimple bodies in each transofrmation pack
+
+        // Resolve required classes
         Scene.v().addBasicClass("java.io.PrintStream",SootClass.SIGNATURES);
         Scene.v().addBasicClass("java.lang.System",SootClass.SIGNATURES);
         Scene.v().loadNecessaryClasses();

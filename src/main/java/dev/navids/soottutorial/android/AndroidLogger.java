@@ -20,43 +20,63 @@ public class AndroidLogger {
 
     public static void main(String[] args){
 
-        if(System.getenv().containsKey("ANDROID_HOME"))
+        if (System.getenv().containsKey("ANDROID_HOME"))
             androidJar = System.getenv("ANDROID_HOME")+ File.separator+"platforms";
+
         // Clean the outputPath
         final File[] files = (new File(outputPath)).listFiles();
         if (files != null && files.length > 0) {
             Arrays.asList(files).forEach(File::delete);
         }
+
         // Initialize Soot
         InstrumentUtil.setupSoot(androidJar, apkPath, outputPath);
-        // Add a transformation pack in order to add the statement "System.out.println(<content>) at the beginning of each Application method
+
+        // Add a transformation pack in order to add the statement "System.out.println(<content>)
+        // at the beginning of each Application method
         PackManager.v().getPack("jtp").add(new Transform("jtp.myLogger", new BodyTransformer() {
             @Override
             protected void internalTransform(Body b, String phaseName, Map<String, String> options) {
                 // First we filter out Android framework methods
-                if(AndroidUtil.isAndroidMethod(b.getMethod()))
+                // First of all, we need to filter out non-APK methods (lines 5–6),
+                // because Soot loads these methods and may not
+                // be aware that they belong to Android libraries (check`isAndroidMethod`).
+                if (AndroidUtil.isAndroidMethod(b.getMethod()))
                     return;
+
                 JimpleBody body = (JimpleBody) b;
                 UnitPatchingChain units = b.getUnits();
                 List<Unit> generatedUnits = new ArrayList<>();
 
                 // The message that we want to log
-                String content = String.format("%s Beginning of method %s", InstrumentUtil.TAG, body.getMethod().getSignature());
+                String content = String.format("%s Beginning of method %s",
+                        InstrumentUtil.TAG,
+                        body.getMethod().getSignature());
                 // In order to call "System.out.println" we need to create a local containing "System.out" value
                 Local psLocal = InstrumentUtil.generateNewLocal(body, RefType.v("java.io.PrintStream"));
                 // Now we assign "System.out" to psLocal
                 SootField sysOutField = Scene.v().getField("<java.lang.System: java.io.PrintStream out>");
-                AssignStmt sysOutAssignStmt = Jimple.v().newAssignStmt(psLocal, Jimple.v().newStaticFieldRef(sysOutField.makeRef()));
+                // next line creates an `AssignStmt` equivalent to `$r1 = <java.lang.System: java.io.PrintStream out> `
+                // (note that you need to pass the reference of a SootField or SootMethod)
+                AssignStmt sysOutAssignStmt = Jimple.v().newAssignStmt(psLocal,
+                        Jimple.v().newStaticFieldRef(sysOutField.makeRef()));
                 generatedUnits.add(sysOutAssignStmt);
 
                 // Create println method call and provide its parameter
+                // Similarly, next line creates an `InvokeStmt` that has a virtual invoke expression equivalent to
+                // `virtualinvoke $r1.<java.io.PrintStream: void println(java.lang.String)>
+                // ("<SOOT_TUTORIAL> Beginning of method METHOD_NAME")` .
                 SootMethod printlnMethod = Scene.v().grabMethod("<java.io.PrintStream: void println(java.lang.String)>");
+                // Note that the parameter of this invocation must be a `Value`;
+                // therefore, we use `StringConstant` to create a String constant`Value` equal to the content.
                 Value printlnParamter = StringConstant.v(content);
-                InvokeStmt printlnMethodCallStmt = Jimple.v().newInvokeStmt(Jimple.v().newVirtualInvokeExpr(psLocal, printlnMethod.makeRef(), printlnParamter));
+                InvokeStmt printlnMethodCallStmt = Jimple.v().newInvokeStmt(Jimple.v().newVirtualInvokeExpr(psLocal,
+                        printlnMethod.makeRef(), printlnParamter));
                 generatedUnits.add(printlnMethodCallStmt);
 
                 // Insert the generated statement before the first  non-identity stmt
                 units.insertBefore(generatedUnits, body.getFirstNonIdentityStmt());
+
                 // Validate the body to ensure that our code injection does not introduce any problem (at least statically)
                 b.validate();
             }

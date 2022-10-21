@@ -18,27 +18,34 @@ public class Main {
             return;
         }
         String[] restOfTheArgs = Arrays.copyOfRange(args, 1, args.length);
-        if(args[0].equals("HelloSoot"))
-            HelloSoot.main(restOfTheArgs);
-        else if(args[0].equals("BasicAPI"))
-            BasicAPI.main(restOfTheArgs);
-        else if(args[0].equals("AndroidLogger")) {
-            AndroidLogger.main(restOfTheArgs);
+        switch (args[0]) {
+            case "HelloSoot":
+                HelloSoot.main(restOfTheArgs);
+                break;
+            case "BasicAPI":
+                BasicAPI.main(restOfTheArgs);
+                break;
+            case "AndroidLogger":
+                AndroidLogger.main(restOfTheArgs);
+                break;
+            case "AndroidClassInjector":
+                AndroidClassInjector.main(restOfTheArgs);
+                break;
+            case "AndroidCallGraph":
+                AndroidCallgraph.main(restOfTheArgs);
+                break;
+            case "AndroidPTA":
+                AndroidPointsToAnalysis.main(restOfTheArgs);
+                break;
+            case "UsageFinder":
+                UsageFinder.main(restOfTheArgs);
+                break;
+            case "NullPointerAnalysis":
+                NPAMain.main(restOfTheArgs);
+                break;
+            default:
+                System.err.println("The class '" + args[0] + "' does not exists or does not have a main method.");
+                break;
         }
-        else if(args[0].equals("AndroidClassInjector")) {
-            AndroidClassInjector.main(restOfTheArgs);
-        }
-        else if(args[0].equals("AndroidCallGraph")) {
-            AndroidCallgraph.main(restOfTheArgs);
-        }
-        else if(args[0].equals("AndroidPTA")) {
-            AndroidPointsToAnalysis.main(restOfTheArgs);
-        }
-        else if(args[0].equals("UsageFinder"))
-            UsageFinder.main(restOfTheArgs);
-        else if(args[0].equals("NullPointerAnalysis"))
-            NPAMain.main(restOfTheArgs);
-        else
-            System.err.println("The class '" + args[0] + "' does not exists or does not have a main method.");
     }
 }

@@ -102,7 +102,8 @@ public class AndroidPointsToAnalysis {
                             VirtualInvokeExpr virtualInvokeExpr = (VirtualInvokeExpr) invokeStmt.getInvokeExpr();
                             Local baseLocal = (Local) virtualInvokeExpr.getBase();
                             if(isParentChildClassLocal(baseLocal)){
-                                String label = String.format("%s.%s {%s}", sootClass.getShortName(), sootMethod.getName(), virtualInvokeExpr);
+                                String label = String.format("%s.%s {%s}", sootClass.getShortName(),
+                                        sootMethod.getName(), virtualInvokeExpr);
                                 allParentChildLocals.add(new Pair<>(baseLocal, label));
                             }
 

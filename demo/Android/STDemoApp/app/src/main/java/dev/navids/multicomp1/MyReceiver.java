@@ -1,5 +1,6 @@
 package dev.navids.multicomp1;
 
+import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -7,10 +8,12 @@ import android.content.Intent;
 public class MyReceiver extends BroadcastReceiver {
 //    ClassA instanceA = new ClassA();
     ClassParent instanceFromSecondActivity;
+
     public MyReceiver() {
         instanceFromSecondActivity = SecondActivity.parentInstance;
     }
 
+    @SuppressLint("UnsafeProtectedBroadcastReceiver")
     @Override
     public void onReceive(Context context, Intent intent) {
         intermediaryMethod();
